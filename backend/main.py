@@ -3,16 +3,17 @@ from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel,Field
-import pickle5 as pickle
+import joblib
 import os
 
 app = FastAPI()
 origins = [
     "http://localhost:5173",
+    "http://192.168.101.7:5173",
 ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -47,7 +48,7 @@ def predict(form: FormSchema,response:Response):
     try:
         model_path = os.path.join(static_folder, "hepatitis_model.pkl")
         with open(model_path, 'rb') as f:
-            model = pickle.load(f)
+            model = joblib.load(f)
         value = [form.Age,form.Sex,form.ALB,form.ALP,form.ALT,form.AST,form.BIL,form.CHE,form.CHOL,form.CREA,form.GGT,form.PROT]
         y_pre = model.predict([value])
         output = finding[y_pre[0]]
