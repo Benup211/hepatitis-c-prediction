@@ -1,12 +1,22 @@
 from fastapi import FastAPI,status
 from fastapi.responses import Response
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel,Field
 import pickle5 as pickle
 import os
 
 app = FastAPI()
-
+origins = [
+    "http://localhost:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 class FormSchema(BaseModel):
     Age:int
     Sex: int = Field(..., ge=0, le=1)
